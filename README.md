@@ -30,7 +30,13 @@ A professional, microservice-ready Node.js web application designed with **Defen
 - **UUID Renaming:** All files are renamed to a randomized UUID to prevent filename enumeration and directory traversal.
 - **Isolated Storage:** Files are stored outside the public web root to prevent direct execution.
 
-### 5. Logging & Auditability (OWASP A9)
+### 5. Advanced UI & Functional Features
+- **Dashboard Analytics:** Visual statistics showing Total, Completed, and Pending tasks.
+- **Task Priorities:** Categorization of tasks into High, Medium, and Low priorities with visual badges.
+- **Success Notifications:** Secure flash-message system for real-time user feedback.
+- **Responsive Fluid UI:** Modern Enterprise design using Inter typography and responsive containers.
+
+### 6. Logging & Auditability (OWASP A9)
 - **Audit Logging:** Secure logging of all authentication events, administrative changes, and security failures.
 - **Admin Dashboard:** Real-time user management and audit log viewing for administrators.
 
