@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WhatsNext? Secure Task Manager</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <nav class="navbar navbar-expand-lg navbar-dark fixed-top bg-dark border-bottom border-secondary">
+    <div class="container">
+      <a class="navbar-brand fw-bold" href="/">WhatsNext?</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMain" aria-controls="navbarMain" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarMain">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+          <% if (locals.user) { %>
+            <li class="nav-item"><a class="nav-link" href="/tasks">Dashboard</a></li>
+            <li class="nav-item"><a class="nav-link" href="/profile">Profile</a></li>
+            <% if (locals.user.role === 'admin') { %>
+              <li class="nav-item"><a class="nav-link text-warning" href="/admin">Admin Panel</a></li>
+            <% } %>
+          <% } %>
+        </ul>
+        <ul class="navbar-nav ms-auto align-items-lg-center">
+          <% if (locals.user) { %>
+            <li class="nav-item">
+              <span class="nav-link text-white-50 me-lg-2">Logged in as <strong><%= locals.user.username %></strong></span>
+            </li>
+            <li class="nav-item mt-2 mt-lg-0">
+              <a class="btn btn-outline-danger btn-sm w-100" href="/auth/logout">Logout</a>
+            </li>
+          <% } else { %>
+            <li class="nav-item"><a class="nav-link" href="/auth/login">Login</a></li>
+            <li class="nav-item"><a class="nav-link btn btn-success btn-sm text-white ms-lg-2 px-3 mt-2 mt-lg-0" href="/auth/register">Register</a></li>
+          <% } %>
+        </ul>
+      </div>
+    </div>
+  </nav>
+  <div class="container mt-4">

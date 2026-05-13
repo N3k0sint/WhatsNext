@@ -1,0 +1,40 @@
+<%- include('partials/header') %>
+
+<div class="row justify-content-center">
+  <div class="col-md-6 col-lg-5">
+    <div class="card border-0">
+      <div class="card-header border-bottom text-center">
+        <h6 class="mb-0 text-uppercase small tracking-wider">Create Account</h6>
+      </div>
+      <div class="card-body p-4">
+        <% if (errors && errors.length > 0) { %>
+          <div class="alert alert-danger">
+            <ul class="mb-0">
+              <% errors.forEach(err => { %>
+                <li><%= err.msg %></li>
+              <% }) %>
+            </ul>
+          </div>
+        <% } %>
+        
+        <form action="/auth/register" method="POST">
+          <!-- Anti-CSRF Token -->
+          <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+          
+          <div class="mb-3">
+            <label for="username" class="form-label">Username</label>
+            <input type="text" class="form-control" id="username" name="username" placeholder="3-50 characters" required>
+          </div>
+          <div class="mb-3">
+            <label for="password" class="form-label">Password</label>
+            <input type="password" class="form-control" id="password" name="password" placeholder="Strong Password Required" required>
+            <div class="form-text">Min 8 characters, with uppercase, lowercase, number, and special character.</div>
+          </div>
+          <button type="submit" class="btn btn-success w-100">Register</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%- include('partials/footer') %>

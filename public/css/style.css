@@ -1,0 +1,94 @@
+:root {
+    --primary-color: #0f172a; 
+    --accent-color: #3b82f6;  
+    --bg-light: #f1f5f9;
+    --border-color: #e2e8f0;
+    --text-main: #1e293b;
+    --text-muted: #64748b;
+    --card-cap-bg: #f8fafc;
+}
+
+body {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    background-color: var(--bg-light);
+    color: var(--text-main);
+    font-size: 0.85rem; /* Ultra-compact font */
+    line-height: 1.4;
+    padding-top: 4rem;
+    padding-bottom: 2rem;
+}
+
+/* Fluid Navigation */
+.navbar {
+    background-color: var(--primary-color) !important;
+    padding: 0.4rem 0;
+}
+
+.navbar-brand {
+    font-weight: 700;
+    font-size: 1rem;
+}
+
+/* Fluid Container */
+.container {
+    max-width: 95% !important; /* Use almost full screen width */
+}
+
+/* Ultra-Compact Cards */
+.card {
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    margin-bottom: 0.75rem;
+}
+
+.card-header {
+    background-color: var(--card-cap-bg);
+    padding: 0.4rem 0.75rem;
+    font-size: 0.75rem;
+}
+
+.card-body {
+    padding: 1rem;
+}
+
+/* Mini Buttons & Badges */
+.btn {
+    font-size: 0.75rem;
+    padding: 0.25rem 0.6rem;
+    border-radius: 3px;
+}
+
+.badge {
+    font-size: 0.65rem;
+    padding: 0.2em 0.5em;
+    font-weight: 700;
+}
+
+/* Slim Tables */
+.table thead th {
+    font-size: 0.65rem;
+    padding: 6px 10px;
+    background-color: #f8fafc;
+}
+
+.table tbody td {
+    padding: 6px 10px;
+    font-size: 0.8rem;
+}
+
+/* Form Controls */
+.form-control {
+    font-size: 0.8rem;
+    padding: 0.35rem 0.6rem;
+}
+
+.form-label {
+    font-size: 0.75rem;
+    margin-bottom: 0.2rem;
+}
+
+.dashboard-title {
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin-bottom: 0.75rem;
+}
