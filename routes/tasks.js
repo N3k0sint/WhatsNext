@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const { body, validationResult } = require('express-validator');
 const Task = require('../models/Task');
+const AuditLog = require('../models/AuditLog');
 const { isAuthenticated } = require('../middleware/authMiddleware');
 const upload = require('../middleware/uploadMiddleware');
 const logger = require('../utils/logger');
@@ -64,6 +65,14 @@ router.post('/', upload.single('attachment'), [
       userId: req.session.userId,
       attachmentPath
     });
+
+    await AuditLog.create({
+      action: 'TASK_CREATED',
+      details: `User created task '${req.body.title}'${attachmentPath ? ' with attachment: ' + attachmentPath : ''}`,
+      username: req.session.user.username,
+      ipAddress: req.ip
+    });
+
     req.flash('success', 'Task created successfully!');
     res.redirect('/tasks');
   } catch (err) {
@@ -105,6 +114,14 @@ router.post('/:id/delete', async (req, res) => {
     }
 
     await task.destroy();
+
+    await AuditLog.create({
+      action: 'TASK_DELETED',
+      details: `User deleted task: ${task.title}`,
+      username: req.session.user.username,
+      ipAddress: req.ip
+    });
+
     req.flash('success', 'Task deleted successfully.');
     res.redirect('/tasks');
   } catch (err) {
@@ -117,12 +134,13 @@ router.post('/:id/delete', async (req, res) => {
 router.get('/download/:filename', async (req, res) => {
   try {
     const filename = req.params.filename;
-    // Verify user owns a task with this attachment to prevent unauthorized downloads
+    // Verify user owns a task with this attachment. 
+    // PoLP: Even Admins cannot download other users' files to ensure data privacy.
     const task = await Task.findOne({ where: { attachmentPath: filename, userId: req.session.userId } });
     
-    // Admins can download any file
-    if (!task && req.session.role !== 'admin') {
-      return res.status(403).render('error', { status: 403, message: 'Forbidden' });
+    if (!task) {
+      logger.warn(`Unauthorized download attempt for file: ${filename} by User ID: ${req.session.userId}`);
+      return res.status(403).render('error', { status: 403, message: 'Access Denied: You can only download your own attachments.' });
     }
     
     const filePath = path.join(__dirname, '..', 'uploads', filename);
