@@ -1,5 +1,7 @@
 # WhatsNext? - Enterprise Secure Task Management System
 
+WhatsNext? is a simple, secure web-based task management application designed to help users organize their daily chores and schedules. The goal of this project isn't just to make a "to-do list," but to build a functional system where security is integrated into the code from day one, rather than added as an afterthought.
+
 ![Project Badge](https://img.shields.io/badge/Security-OWASP_ASVS_V4-blue)
 ![Project Badge](https://img.shields.io/badge/Status-Complete-green)
 
@@ -40,16 +42,19 @@ A professional, microservice-ready Node.js web application designed with **Defen
 - **Node.js** (v18.x or higher)
 - **npm**
 
-### Step 1: Clone and Install
+### Step 1: Clone the Repository
 ```bash
-# Navigate to the project directory
+git clone https://github.com/N3k0sint/WhatsNext.git
 cd WhatsNext
+```
 
+### Step 2: Install Dependencies
+```bash
 # Install secure dependencies
 npm install
 ```
 
-### Step 2: Environment Configuration
+### Step 3: Environment Configuration
 Create a `.env` file in the root directory and add a strong session secret:
 ```bash
 SESSION_SECRET=your_super_secret_random_string_here
@@ -57,7 +62,7 @@ PORT=3000
 ```
 *(A `.env.example` file is provided as a template)*
 
-### Step 3: Run the Application
+### Step 4: Run the Application
 ```bash
 # Start the production-ready server
 npm start
