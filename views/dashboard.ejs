@@ -1,8 +1,36 @@
 <%- include('partials/header') %>
 
-<div class="row mb-2">
+<div class="row mb-3">
   <div class="col">
     <h2 class="dashboard-title">Workspace Dashboard</h2>
+  </div>
+</div>
+
+<!-- Stats Row -->
+<div class="row mb-4">
+  <div class="col-md-3">
+    <div class="card border-0 bg-white text-center py-3">
+      <div class="small text-muted text-uppercase fw-bold">Total Tasks</div>
+      <div class="h3 mb-0 fw-bold"><%= stats.totalTasks %></div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="card border-0 bg-white text-center py-3">
+      <div class="small text-muted text-uppercase fw-bold">Completed</div>
+      <div class="h3 mb-0 fw-bold text-success"><%= stats.completedTasks %></div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="card border-0 bg-white text-center py-3">
+      <div class="small text-muted text-uppercase fw-bold">Pending</div>
+      <div class="h3 mb-0 fw-bold text-warning"><%= stats.pendingTasks %></div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="card border-0 bg-white text-center py-3">
+      <div class="small text-muted text-uppercase fw-bold">Progress</div>
+      <div class="h3 mb-0 fw-bold text-primary"><%= stats.completionRate %>%</div>
+    </div>
   </div>
 </div>
 
@@ -36,6 +64,14 @@
             <textarea class="form-control" id="description" name="description" rows="3"></textarea>
           </div>
           <div class="mb-3">
+            <label for="priority" class="form-label">Priority</label>
+            <select class="form-select" id="priority" name="priority">
+              <option value="Low">Low</option>
+              <option value="Medium" selected>Medium</option>
+              <option value="High">High</option>
+            </select>
+          </div>
+          <div class="mb-3">
             <label for="attachment" class="form-label">Attachment (PDF/Img, Max 10MB)</label>
             <input class="form-control" type="file" id="attachment" name="attachment" accept=".pdf,.jpg,.jpeg,.png">
             <div class="form-text">Files will be renamed to a secure UUID.</div>
@@ -58,6 +94,7 @@
             <thead>
               <tr>
                 <th>Title</th>
+                <th>Priority</th>
                 <th>Status</th>
                 <th>Attachment</th>
                 <th>Actions</th>
@@ -66,16 +103,25 @@
             <tbody>
               <% if (tasks.length === 0) { %>
                 <tr>
-                  <td colspan="4" class="text-center py-4">No tasks found. Create one!</td>
+                  <td colspan="5" class="text-center py-4 text-muted small">No tasks found. Create one to get started.</td>
                 </tr>
-              <% } else { %>
-                <% tasks.forEach(task => { %>
-                  <tr>
-                    <td>
-                      <strong><%= task.title %></strong><br>
-                      <small class="text-muted"><%= task.description %></small>
-                    </td>
-                    <td>
+              <% } %>
+              <% tasks.forEach(task => { %>
+                <tr>
+                  <td>
+                    <div class="fw-bold"><%= task.title %></div>
+                    <div class="small text-muted"><%= task.description %></div>
+                  </td>
+                  <td>
+                    <% if (task.priority === 'High') { %>
+                      <span class="badge bg-danger">High</span>
+                    <% } else if (task.priority === 'Medium') { %>
+                      <span class="badge bg-warning text-dark">Medium</span>
+                    <% } else { %>
+                      <span class="badge bg-success">Low</span>
+                    <% } %>
+                  </td>
+                  <td>
                       <span class="badge <%= task.status === 'Completed' ? 'bg-success' : 'bg-warning text-dark' %>">
                         <%= task.status %>
                       </span>
@@ -103,7 +149,6 @@
                     </td>
                   </tr>
                 <% }) %>
-              <% } %>
             </tbody>
           </table>
         </div>

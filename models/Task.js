@@ -27,6 +27,11 @@ const Task = sequelize.define('Task', {
       isIn: [['Pending', 'In Progress', 'Completed']]
     }
   },
+  priority: {
+    type: DataTypes.ENUM('Low', 'Medium', 'High'),
+    allowNull: false,
+    defaultValue: 'Medium'
+  },
   attachmentPath: {
     type: DataTypes.STRING,
     allowNull: true

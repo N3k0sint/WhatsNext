@@ -14,7 +14,18 @@ router.use(isAuthenticated);
 router.get('/', async (req, res) => {
   try {
     const tasks = await Task.findAll({ where: { userId: req.session.userId } });
-    res.render('dashboard', { tasks, errors: [] });
+    
+    // Calculate stats
+    const totalTasks = tasks.length;
+    const completedTasks = tasks.filter(t => t.status === 'Completed').length;
+    const pendingTasks = totalTasks - completedTasks;
+    const completionRate = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
+
+    res.render('dashboard', { 
+      tasks, 
+      stats: { totalTasks, completedTasks, pendingTasks, completionRate },
+      errors: [] 
+    });
   } catch (err) {
     logger.error(`Error fetching tasks: ${err.message}`);
     res.status(500).render('error', { status: 500, message: 'Error fetching tasks' });
@@ -24,12 +35,24 @@ router.get('/', async (req, res) => {
 // POST Create Task
 router.post('/', upload.single('attachment'), [
   body('title').trim().notEmpty().escape().withMessage('Title is required'),
-  body('description').trim().escape()
+  body('description').trim().escape(),
+  body('priority').isIn(['Low', 'Medium', 'High']).withMessage('Invalid priority selected')
 ], async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     const tasks = await Task.findAll({ where: { userId: req.session.userId } });
-    return res.render('dashboard', { tasks, errors: errors.array() });
+    
+    // Recalculate stats for error re-render
+    const totalTasks = tasks.length;
+    const completedTasks = tasks.filter(t => t.status === 'Completed').length;
+    const pendingTasks = totalTasks - completedTasks;
+    const completionRate = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
+
+    return res.render('dashboard', { 
+      tasks, 
+      stats: { totalTasks, completedTasks, pendingTasks, completionRate },
+      errors: errors.array() 
+    });
   }
 
   try {
@@ -37,6 +60,7 @@ router.post('/', upload.single('attachment'), [
     await Task.create({
       title: req.body.title,
       description: req.body.description,
+      priority: req.body.priority || 'Medium',
       userId: req.session.userId,
       attachmentPath
     });

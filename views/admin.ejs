@@ -1,8 +1,30 @@
 <%- include('partials/header') %>
 
-<div class="row mb-2">
+<div class="row mb-3">
   <div class="col">
     <h2 class="dashboard-title">System Administration</h2>
+  </div>
+</div>
+
+<!-- Admin Quick Insights -->
+<div class="row mb-4">
+  <div class="col-md-4">
+    <div class="card border-0 bg-white text-center py-3">
+      <div class="small text-muted text-uppercase fw-bold">Active Users</div>
+      <div class="h3 mb-0 fw-bold text-primary" id="stat-total-users"><%= users.length %></div>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="card border-0 bg-white text-center py-3">
+      <div class="small text-muted text-uppercase fw-bold">System Status</div>
+      <div class="h3 mb-0 fw-bold text-success">Healthy</div>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="card border-0 bg-white text-center py-3">
+      <div class="small text-muted text-uppercase fw-bold">Security Level</div>
+      <div class="h3 mb-0 fw-bold text-danger">Strict</div>
+    </div>
   </div>
 </div>
 
@@ -107,6 +129,7 @@
     fetch('/admin/api/users')
       .then(res => res.json())
       .then(users => {
+        document.getElementById('stat-total-users').innerText = users.length;
         const tbody = document.getElementById('userTableBody');
         tbody.innerHTML = ''; // clear current rows
         
