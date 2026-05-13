@@ -133,7 +133,7 @@ router.post('/:id/delete', async (req, res) => {
 // GET Download Attachment
 router.get('/download/:filename', async (req, res) => {
   try {
-    const filename = req.params.filename;
+    const filename = path.basename(req.params.filename);
     // Verify user owns a task with this attachment. 
     // PoLP: Even Admins cannot download other users' files to ensure data privacy.
     const task = await Task.findOne({ where: { attachmentPath: filename, userId: req.session.userId } });

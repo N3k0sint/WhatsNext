@@ -62,14 +62,8 @@ app.use(session({
 
 app.use(flash());
 
-// Apply CSRF Protection to all state-changing routes
-app.use((req, res, next) => {
-  // We only require CSRF token for POST/PUT/DELETE
-  if (['POST', 'PUT', 'DELETE'].includes(req.method)) {
-    return csrfSynchronisedProtection(req, res, next);
-  }
-  next();
-});
+// Apply CSRF Protection
+app.use(csrfSynchronisedProtection);
 
 // Generate CSRF Token for views
 app.use((req, res, next) => {
