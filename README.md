@@ -22,6 +22,7 @@ A professional, microservice-ready Node.js web application designed with **Defen
 
 ### 3. Broken Access Control & IDOR (OWASP A5)
 - **RBAC:** Strict Role-Based Access Control differentiating `Admin` and `User` privileges.
+- **Principle of Least Privilege (PoLP):** Strict data isolation where even Admins are blocked from downloading user-specific attachments.
 - **IDOR Prevention:** Server-side ownership verification ensures users can only access their own data and attachments.
 - **Rate Limiting:** Protects authentication endpoints from brute-force attacks.
 
