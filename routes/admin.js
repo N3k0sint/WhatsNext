@@ -69,7 +69,8 @@ router.post('/users/:id/edit', [
 
     // Prevent self-demotion
     if (editUser.id === req.session.userId && role !== 'admin') {
-      return res.render('admin_edit_user', { editUser, errors: [{ msg: 'You cannot remove your own admin privileges.' }] });
+      req.flash('error', 'You cannot remove your own admin privileges.');
+      return res.redirect('/admin');
     }
 
     await editUser.update({ username, role });
@@ -81,6 +82,7 @@ router.post('/users/:id/edit', [
       ipAddress: req.ip
     });
 
+    req.flash('success', `User '${username}' updated successfully.`);
     res.redirect('/admin');
   } catch (err) {
     logger.error(`Error editing user: ${err.message}`);
@@ -96,7 +98,8 @@ router.post('/users/:id/delete', async (req, res) => {
 
     // Prevent deleting yourself
     if (userToDelete.id === req.session.userId) {
-      return res.status(400).render('error', { status: 400, message: 'You cannot delete your own account.' });
+      req.flash('error', 'You cannot delete your own account.');
+      return res.redirect('/admin');
     }
 
     const deletedUsername = userToDelete.username;
@@ -109,6 +112,7 @@ router.post('/users/:id/delete', async (req, res) => {
       ipAddress: req.ip
     });
 
+    req.flash('success', `User '${deletedUsername}' has been deleted.`);
     res.redirect('/admin');
   } catch (err) {
     logger.error(`Error deleting user: ${err.message}`);

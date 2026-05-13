@@ -4,6 +4,7 @@ const helmet = require('helmet');
 const session = require('express-session');
 const { csrfSync } = require('csrf-sync');
 const rateLimit = require('express-rate-limit');
+const flash = require('connect-flash');
 const path = require('path');
 const sequelize = require('./config/database');
 const { setLocals } = require('./middleware/authMiddleware');
@@ -58,6 +59,8 @@ app.use(session({
     maxAge: 3600000 // 1 hour session timeout
   }
 }));
+
+app.use(flash());
 
 // Apply CSRF Protection to all state-changing routes
 app.use((req, res, next) => {

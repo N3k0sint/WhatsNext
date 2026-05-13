@@ -64,6 +64,7 @@ router.post('/', upload.single('attachment'), [
       userId: req.session.userId,
       attachmentPath
     });
+    req.flash('success', 'Task created successfully!');
     res.redirect('/tasks');
   } catch (err) {
     logger.error(`Task creation error: ${err.message}`);
@@ -81,6 +82,7 @@ router.post('/:id/status', async (req, res) => {
     const newStatus = task.status === 'Pending' ? 'Completed' : 'Pending';
     await task.update({ status: newStatus });
     
+    req.flash('success', `Task marked as ${newStatus}!`);
     res.redirect('/tasks');
   } catch (err) {
     logger.error(`Task update error: ${err.message}`);
@@ -103,6 +105,7 @@ router.post('/:id/delete', async (req, res) => {
     }
 
     await task.destroy();
+    req.flash('success', 'Task deleted successfully.');
     res.redirect('/tasks');
   } catch (err) {
     logger.error(`Task deletion error: ${err.message}`);

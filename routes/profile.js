@@ -11,7 +11,7 @@ router.use(isAuthenticated);
 
 // GET Profile Page
 router.get('/', async (req, res) => {
-  res.render('profile', { errors: [], success: [] });
+  res.render('profile', { errors: [] });
 });
 
 // POST Edit Username
@@ -20,7 +20,7 @@ router.post('/edit', [
 ], async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    return res.render('profile', { errors: errors.array(), success: [] });
+    return res.render('profile', { errors: errors.array() });
   }
 
   const { username } = req.body;
@@ -32,7 +32,7 @@ router.post('/edit', [
     if (username !== user.username) {
       const existing = await User.findOne({ where: { username } });
       if (existing) {
-        return res.render('profile', { errors: [{ msg: 'Username is already taken' }], success: [] });
+        return res.render('profile', { errors: [{ msg: 'Username is already taken' }] });
       }
 
       await user.update({ username });
@@ -47,10 +47,12 @@ router.post('/edit', [
         ipAddress: req.ip
       });
 
-      return res.render('profile', { errors: [], success: [{ msg: 'Username updated successfully!' }] });
+      req.flash('success', 'Username updated successfully!');
+      return res.redirect('/profile');
     }
-
-    res.render('profile', { errors: [], success: [{ msg: 'No changes made.' }] });
+    
+    req.flash('success', 'No changes made.');
+    res.redirect('/profile');
   } catch (err) {
     logger.error(`Profile edit error: ${err.message}`);
     res.status(500).render('error', { status: 500, message: 'Internal Server Error' });
@@ -66,7 +68,7 @@ router.post('/password', [
 ], async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    return res.render('profile', { errors: errors.array(), success: [] });
+    return res.render('profile', { errors: errors.array() });
   }
 
   const { currentPassword, newPassword } = req.body;
@@ -83,7 +85,7 @@ router.post('/password', [
         username: user.username,
         ipAddress: req.ip
       });
-      return res.render('profile', { errors: [{ msg: 'Incorrect current password.' }], success: [] });
+      return res.render('profile', { errors: [{ msg: 'Incorrect current password.' }] });
     }
 
     // Hash and update password
@@ -97,7 +99,8 @@ router.post('/password', [
       ipAddress: req.ip
     });
 
-    res.render('profile', { errors: [], success: [{ msg: 'Password changed successfully!' }] });
+    req.flash('success', 'Password changed successfully!');
+    res.redirect('/profile');
   } catch (err) {
     logger.error(`Password change error: ${err.message}`);
     res.status(500).render('error', { status: 500, message: 'Internal Server Error' });

@@ -36,13 +36,7 @@ router.post('/register', [
 
     await User.create({ username, password, role });
     
-    await AuditLog.create({
-      action: 'USER_REGISTERED',
-      details: `User registered with role ${role}`,
-      username: username,
-      ipAddress: req.ip
-    });
-
+    req.flash('success', 'Registration successful! You can now log in.');
     res.redirect('/auth/login');
   } catch (err) {
     logger.error(`Registration error: ${err.message}`);
@@ -86,6 +80,7 @@ router.post('/login', [
       ipAddress: req.ip
     });
 
+    req.flash('success', `Welcome back, ${user.username}!`);
     res.redirect('/tasks');
   } catch (err) {
     logger.error(`Login error: ${err.message}`);

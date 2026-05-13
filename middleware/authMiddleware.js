@@ -17,6 +17,8 @@ const isAdmin = (req, res, next) => {
 // Middleware to expose session data to all views
 const setLocals = (req, res, next) => {
   res.locals.user = req.session.user || null;
+  res.locals.success_msg = req.flash('success');
+  res.locals.error_msg = req.flash('error');
   next();
 };
 
