@@ -2,7 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const helmet = require('helmet');
 const session = require('express-session');
-const { csrfSync } = require('csrf-sync');
+const lusca = require('lusca');
 const rateLimit = require('express-rate-limit');
 const flash = require('connect-flash');
 const path = require('path');
@@ -11,11 +11,7 @@ const { setLocals } = require('./middleware/authMiddleware');
 const logger = require('./utils/logger');
 
 // Setup CSRF Protection
-const { csrfSynchronisedProtection, generateToken } = csrfSync({
-  getTokenFromRequest: (req) => {
-    return (req.body && req.body['_csrf']) || req.query['_csrf'] || req.headers['x-csrf-token'];
-  }
-});
+// CSRF Configuration handled by lusca directly
 
 const app = express();
 
@@ -63,11 +59,11 @@ app.use(session({
 app.use(flash());
 
 // Apply CSRF Protection
-app.use(csrfSynchronisedProtection);
+app.use(lusca.csrf());
 
-// Generate CSRF Token for views
+// Map lusca's _csrf token to csrfToken for our existing views
 app.use((req, res, next) => {
-  res.locals.csrfToken = generateToken(req, true); // true = overwrite
+  res.locals.csrfToken = res.locals._csrf;
   next();
 });
 
@@ -99,7 +95,7 @@ app.use((req, res, next) => {
 app.use((err, req, res, next) => {
   logger.error(`Unhandled Exception: ${err.message}`);
   // Do not send err.stack to the client
-  if (err.code === 'EBADCSRFTOKEN') {
+  if (err.code === 'EBADCSRFTOKEN' || err.message === 'CSRF token mismatch' || err.status === 403) {
     return res.status(403).render('error', { status: 403, message: 'Form tampered with (CSRF attack detected)' });
   }
   res.status(500).render('error', { status: 500, message: 'Internal Server Error' });

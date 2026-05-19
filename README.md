@@ -1,10 +1,12 @@
 # WhatsNext? - Enterprise Secure Task Management System
 
-WhatsNext? is a simple, secure web-based task management application designed to help users organize their daily chores and schedules. The goal of this project isn't just to make a "to-do list," but to build a functional system where security is integrated into the code from day one, rather than added as an afterthought.
+**WhatsNext?** is a high-performance, secure task management ecosystem designed to streamline collaboration while maintaining uncompromising security. This project demonstrates a **"Security-by-Design"** philosophy, where defense mechanisms are woven into the core architecture rather than applied as an afterthought.
 
-A professional, microservice-ready Node.js web application designed with **Defense-in-Depth** and **OWASP-compliant** security practices. 
+Built as an enterprise-ready Node.js application, it adheres to **Defense-in-Depth** principles and **OWASP ASVS** standards.
 
-**This project for Secure Software Development Project Assignments**
+---
+🎓 **Academic Context:** Developed as a capstone project for the *Secure Software Development Project Assignment*.
+
 
 ![Project Badge](https://img.shields.io/badge/Security-OWASP_ASVS_V4-blue)
 ![Project Badge](https://img.shields.io/badge/Status-Complete-green)
