@@ -6,3 +6,4 @@ uploads/
 .DS_Store
 REPORT_GUIDE.md
 Test.md
+verify_passwords.js

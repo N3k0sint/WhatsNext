@@ -107,7 +107,9 @@ router.post('/:id/delete', async (req, res) => {
     
     // Delete attached file if exists
     if (task.attachmentPath) {
-      const filePath = path.join(__dirname, '..', 'uploads', task.attachmentPath);
+      // Use path.basename to ensure no path traversal characters are used
+      const safeFilename = path.basename(task.attachmentPath);
+      const filePath = path.join(__dirname, '..', 'uploads', safeFilename);
       if (fs.existsSync(filePath)) {
         fs.unlinkSync(filePath);
       }
