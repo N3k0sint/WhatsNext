@@ -45,17 +45,17 @@
 
   <div class="container mt-4">
     <!-- Success Alerts -->
-    <% if (success_msg && success_msg.length > 0) { %>
+    <% if (locals.success_msg && locals.success_msg.length > 0) { %>
       <div class="alert alert-success alert-dismissible fade show border-0 shadow-sm" role="alert">
-        <i class="bi bi-check-circle-fill me-2"></i> <%= success_msg %>
+        <i class="bi bi-check-circle-fill me-2"></i> <%= locals.success_msg %>
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
       </div>
     <% } %>
 
     <!-- Error Alerts -->
-    <% if (error_msg && error_msg.length > 0) { %>
+    <% if (locals.error_msg && locals.error_msg.length > 0) { %>
       <div class="alert alert-danger alert-dismissible fade show border-0 shadow-sm" role="alert">
-        <i class="bi bi-exclamation-triangle-fill me-2"></i> <%= error_msg %>
+        <i class="bi bi-exclamation-triangle-fill me-2"></i> <%= locals.error_msg %>
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
       </div>
     <% } %>
