@@ -73,6 +73,15 @@ router.post('/users/:id/edit', [
       return res.redirect('/admin');
     }
 
+    // Prevent demoting the last admin
+    if (editUser.role === 'admin' && role !== 'admin') {
+      const adminCount = await User.count({ where: { role: 'admin' } });
+      if (adminCount <= 1) {
+        req.flash('error', 'Cannot demote the only remaining administrator.');
+        return res.redirect('/admin');
+      }
+    }
+
     await editUser.update({ username, role });
 
     await AuditLog.create({
@@ -100,6 +109,15 @@ router.post('/users/:id/delete', async (req, res) => {
     if (userToDelete.id === req.session.userId) {
       req.flash('error', 'You cannot delete your own account.');
       return res.redirect('/admin');
+    }
+
+    // Prevent deleting the last admin
+    if (userToDelete.role === 'admin') {
+      const adminCount = await User.count({ where: { role: 'admin' } });
+      if (adminCount <= 1) {
+        req.flash('error', 'Cannot delete the only remaining administrator.');
+        return res.redirect('/admin');
+      }
     }
 
     const deletedUsername = userToDelete.username;
