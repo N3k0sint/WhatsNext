@@ -102,8 +102,13 @@ app.use((req, res, next) => {
 // Global Error Handler (OWASP ASVS V7 - No Stack Traces Exposed)
 app.use((err, req, res, next) => {
   logger.error(`Unhandled Exception: ${err.message}`);
-  // Do not send err.stack to the client
-  if (err.code === 'EBADCSRFTOKEN' || err.message === 'CSRF token mismatch' || err.status === 403) {
+  if (err.code === 'EBADCSRFTOKEN' || err.message === 'CSRF token mismatch') {
+    const reqToken = (req.body && req.body._csrf) || req.headers['x-csrf-token'] || (req.query && req.query._csrf);
+    const sessToken = req.session ? req.session._csrf : 'No Session';
+    logger.warn(`CSRF Token Mismatch! Request token: ${reqToken}. Session token: ${sessToken}`);
+    return res.status(403).render('error', { status: 403, message: 'Form tampered with (CSRF attack detected)' });
+  }
+  if (err.status === 403) {
     return res.status(403).render('error', { status: 403, message: 'Form tampered with (CSRF attack detected)' });
   }
   res.status(500).render('error', { status: 500, message: 'Internal Server Error' });

@@ -105,8 +105,9 @@
                     <div class="d-flex gap-2">
                       <a href="/admin/users/<%= u.id %>/edit" class="btn btn-sm btn-outline-primary" onclick="return confirm('Are you sure you want to edit this user?');">Edit</a>
                       <% if (locals.user && locals.user.id !== u.id) { %>
-                        <form action="/admin/users/<%= u.id %>/delete?_csrf=<%= csrfToken %>" method="POST" onsubmit="return confirm('Are you sure you want to completely delete this user and all their tasks?');">
-                          <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                        <form action="/admin/users/<%= u.id %>/delete" method="POST" onsubmit="return confirm('Are you sure you want to completely delete this user and all their tasks?');">
+                          <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                          <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to completely delete this user and all their tasks?');">Delete</button>
                         </form>
                       <% } else { %>
                         <button class="btn btn-sm btn-secondary" disabled title="Cannot delete yourself">Delete</button>
@@ -145,8 +146,9 @@
           
           if (currentUserId !== u.id) {
             actionButtons += `
-              <form action="/admin/users/${u.id}/delete?_csrf=<%= csrfToken %>" method="POST" class="d-inline" onsubmit="return confirm('Are you sure you want to completely delete this user and all their tasks?');">
-                <button type="submit" class="btn btn-sm btn-danger ms-2">Delete</button>
+              <form action="/admin/users/${u.id}/delete" method="POST" class="d-inline" onsubmit="return confirm('Are you sure you want to completely delete this user and all their tasks?');">
+                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                <button type="submit" class="btn btn-sm btn-danger ms-2" onclick="return confirm('Are you sure you want to completely delete this user and all their tasks?');">Delete</button>
               </form>
             `;
           } else {

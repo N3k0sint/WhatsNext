@@ -31,7 +31,8 @@
         <hr>
 
         <h5 class="mb-3">Edit Profile</h5>
-        <form action="/profile/edit?_csrf=<%= csrfToken %>" method="POST" onsubmit="return confirm('Are you sure you want to change your username?');">
+        <form action="/profile/edit" method="POST" onsubmit="return confirm('Are you sure you want to change your username?');">
+          <input type="hidden" name="_csrf" value="<%= csrfToken %>">
           <div class="mb-3">
             <label for="username" class="form-label">Username</label>
             <input type="text" class="form-control" id="username" name="username" value="<%= locals.user ? locals.user.username : '' %>" required>
@@ -42,7 +43,8 @@
         <hr>
 
         <h5 class="mb-3 text-danger">Change Password</h5>
-        <form action="/profile/password?_csrf=<%= csrfToken %>" method="POST" onsubmit="return confirm('Are you sure you want to change your password?');">
+        <form action="/profile/password" method="POST" onsubmit="return confirm('Are you sure you want to change your password?');">
+          <input type="hidden" name="_csrf" value="<%= csrfToken %>">
           <div class="mb-3">
             <label for="currentPassword" class="form-label">Current Password</label>
             <input type="password" class="form-control" id="currentPassword" name="currentPassword" required>

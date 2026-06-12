@@ -18,7 +18,8 @@
           </div>
         <% } %>
 
-        <form action="/admin/users/<%= editUser.id %>/edit?_csrf=<%= csrfToken %>" method="POST" onsubmit="return confirm('Are you sure you want to save these changes?');">
+        <form action="/admin/users/<%= editUser.id %>/edit" method="POST" onsubmit="return confirm('Are you sure you want to save these changes?');">
+          <input type="hidden" name="_csrf" value="<%= csrfToken %>">
           <div class="mb-3">
             <label for="username" class="form-label">Username</label>
             <input type="text" class="form-control" id="username" name="username" value="<%= editUser.username %>" required>
@@ -32,7 +33,7 @@
             </select>
           </div>
           
-          <button type="submit" class="btn btn-primary w-100">Save Changes</button>
+          <button type="submit" class="btn btn-primary w-100" onclick="return confirm('Are you sure you want to save these changes?');">Save Changes</button>
         </form>
       </div>
     </div>
