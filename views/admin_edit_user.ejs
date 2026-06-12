@@ -1,5 +1,24 @@
 <%- include('partials/header') %>
 
+<!-- Save Changes Confirm Modal -->
+<div class="modal fade" id="saveConfirmModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header bg-primary text-white">
+        <h5 class="modal-title"><i class="bi bi-pencil-fill me-2"></i>Confirm Changes</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        Are you sure you want to save these changes for user <strong><%= editUser.username %></strong>?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-primary" id="confirmSaveBtn">Yes, Save Changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div class="row justify-content-center mb-4">
   <div class="col-md-6">
     <div class="card shadow border-primary">
@@ -18,13 +37,13 @@
           </div>
         <% } %>
 
-        <form action="/admin/users/<%= editUser.id %>/edit" method="POST" onsubmit="return confirm('Are you sure you want to save these changes?');">
+        <form id="editUserForm" action="/admin/users/<%= editUser.id %>/edit" method="POST">
           <input type="hidden" name="_csrf" value="<%= csrfToken %>">
           <div class="mb-3">
             <label for="username" class="form-label">Username</label>
-            <input type="text" class="form-control" id="username" name="username" value="<%= editUser.username %>" required>
+            <input type="text" class="form-control" id="username" name="username"
+              value="<%= editUser.username %>" required>
           </div>
-          
           <div class="mb-3">
             <label for="role" class="form-label">Role</label>
             <select class="form-select" id="role" name="role" required>
@@ -32,8 +51,8 @@
               <option value="admin" <%= editUser.role === 'admin' ? 'selected' : '' %>>Admin</option>
             </select>
           </div>
-          
-          <button type="submit" class="btn btn-primary w-100" onclick="return confirm('Are you sure you want to save these changes?');">Save Changes</button>
+          <!-- triggers modal via admin_edit_user.js -->
+          <button type="button" id="triggerSaveModal" class="btn btn-primary w-100">Save Changes</button>
         </form>
       </div>
     </div>
@@ -41,3 +60,4 @@
 </div>
 
 <%- include('partials/footer') %>
+<script src="/js/admin_edit_user.js"></script>

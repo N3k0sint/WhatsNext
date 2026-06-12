@@ -9,7 +9,7 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
   <link rel="stylesheet" href="/css/style.css">
 </head>
-<body>
+<body data-csrf="<%= locals.csrfToken || '' %>" data-user-id="<%= locals.user ? locals.user.id : '' %>">
   <nav class="navbar navbar-expand-lg navbar-dark fixed-top bg-dark border-bottom border-secondary">
     <div class="container">
       <a class="navbar-brand fw-bold" href="/">WhatsNext?</a>

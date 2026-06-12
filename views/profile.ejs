@@ -1,5 +1,39 @@
 <%- include('partials/header') %>
 
+<!-- Username Change Confirm Modal -->
+<div class="modal fade" id="usernameConfirmModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header bg-primary text-white">
+        <h5 class="modal-title"><i class="bi bi-person-fill me-2"></i>Change Username</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">Are you sure you want to change your username?</div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-primary" id="confirmUsernameBtn">Yes, Update</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Password Change Confirm Modal -->
+<div class="modal fade" id="passwordConfirmModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header bg-danger text-white">
+        <h5 class="modal-title"><i class="bi bi-lock-fill me-2"></i>Change Password</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">Are you sure you want to change your password?</div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-danger" id="confirmPasswordBtn">Yes, Change Password</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div class="row justify-content-center mb-4">
   <div class="col-md-6 col-lg-5">
     <div class="card border-0">
@@ -7,7 +41,7 @@
         <h6 class="mb-0 text-uppercase small tracking-wider">Account Settings</h6>
       </div>
       <div class="card-body">
-        
+
         <% if (errors && errors.length > 0) { %>
           <div class="alert alert-danger">
             <ul class="mb-0">
@@ -19,9 +53,7 @@
         <% } %>
 
         <div class="text-center mb-4">
-          <div class="display-1 text-info mb-2">
-            <i class="bi bi-person-circle"></i>
-          </div>
+          <div class="display-1 text-info mb-2"><i class="bi bi-person-circle"></i></div>
           <h3><%= locals.user ? locals.user.username : 'User' %></h3>
           <span class="badge <%= locals.user && locals.user.role === 'admin' ? 'bg-danger' : 'bg-primary' %>">
             <%= locals.user ? locals.user.role.toUpperCase() : 'USER' %>
@@ -31,19 +63,21 @@
         <hr>
 
         <h5 class="mb-3">Edit Profile</h5>
-        <form action="/profile/edit" method="POST" onsubmit="return confirm('Are you sure you want to change your username?');">
+        <form id="usernameForm" action="/profile/edit" method="POST">
           <input type="hidden" name="_csrf" value="<%= csrfToken %>">
           <div class="mb-3">
             <label for="username" class="form-label">Username</label>
-            <input type="text" class="form-control" id="username" name="username" value="<%= locals.user ? locals.user.username : '' %>" required>
+            <input type="text" class="form-control" id="username" name="username"
+              value="<%= locals.user ? locals.user.username : '' %>" required>
           </div>
-          <button type="submit" class="btn btn-primary w-100 mb-3">Update Username</button>
+          <!-- triggers modal via profile.js -->
+          <button type="button" id="triggerUsernameModal" class="btn btn-primary w-100 mb-3">Update Username</button>
         </form>
 
         <hr>
 
         <h5 class="mb-3 text-danger">Change Password</h5>
-        <form action="/profile/password" method="POST" onsubmit="return confirm('Are you sure you want to change your password?');">
+        <form id="passwordForm" action="/profile/password" method="POST">
           <input type="hidden" name="_csrf" value="<%= csrfToken %>">
           <div class="mb-3">
             <label for="currentPassword" class="form-label">Current Password</label>
@@ -54,7 +88,8 @@
             <input type="password" class="form-control" id="newPassword" name="newPassword" required minlength="8">
             <div class="form-text">Min 8 characters, with uppercase, lowercase, number, and special character.</div>
           </div>
-          <button type="submit" class="btn btn-danger w-100">Change Password</button>
+          <!-- triggers modal via profile.js -->
+          <button type="button" id="triggerPasswordModal" class="btn btn-danger w-100">Change Password</button>
         </form>
 
       </div>
@@ -63,3 +98,4 @@
 </div>
 
 <%- include('partials/footer') %>
+<script src="/js/profile.js"></script>
