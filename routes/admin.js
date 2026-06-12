@@ -33,9 +33,31 @@ router.get('/api/users', async (req, res) => {
 // GET Edit User Page
 router.get('/users/:id/edit', async (req, res) => {
   try {
-    const editUser = await User.findByPk(req.params.id);
+    const targetId = parseInt(req.params.id, 10);
+
+    // IDOR Guard: reject non-integer IDs immediately
+    if (isNaN(targetId)) {
+      logger.warn(`IDOR attempt: Admin '${req.session.user.username}' tried to access edit with invalid ID '${req.params.id}' from IP: ${req.ip}`);
+      return res.status(400).render('error', { status: 400, message: 'Invalid user ID.' });
+    }
+
+    // Self-edit via admin panel is blocked — use Profile page instead
+    if (targetId === req.session.userId) {
+      req.flash('error', 'Use the Profile page to edit your own account.');
+      return res.redirect('/admin');
+    }
+
+    const editUser = await User.findByPk(targetId);
     if (!editUser) return res.status(404).render('error', { status: 404, message: 'User not found' });
-    
+
+    // Audit: log every admin access to the edit form (SSDLC Audit & Accountability)
+    await AuditLog.create({
+      action: 'ADMIN_EDIT_PAGE_ACCESS',
+      details: `Admin accessed edit form for user ID ${targetId} (${editUser.username})`,
+      username: req.session.user.username,
+      ipAddress: req.ip
+    });
+
     res.render('admin_edit_user', { editUser, errors: [] });
   } catch (err) {
     logger.error(`Error loading edit user page: ${err.message}`);
@@ -43,13 +65,26 @@ router.get('/users/:id/edit', async (req, res) => {
   }
 });
 
+
 // POST Edit User
 router.post('/users/:id/edit', [
   body('username').trim().isLength({ min: 3, max: 50 }).escape().withMessage('Username must be 3-50 characters.'),
   body('role').isIn(['user', 'admin']).withMessage('Invalid role selected.')
 ], async (req, res) => {
   try {
-    const editUser = await User.findByPk(req.params.id);
+    const targetId = parseInt(req.params.id, 10);
+    if (isNaN(targetId)) {
+      logger.warn(`IDOR attempt on POST edit: Admin '${req.session.user.username}' used invalid ID '${req.params.id}' from IP: ${req.ip}`);
+      return res.status(400).render('error', { status: 400, message: 'Invalid user ID.' });
+    }
+
+    // Prevent self-edit via admin panel POST (use Profile instead)
+    if (targetId === req.session.userId) {
+      req.flash('error', 'Use the Profile page to edit your own account.');
+      return res.redirect('/admin');
+    }
+
+    const editUser = await User.findByPk(targetId);
     if (!editUser) return res.status(404).render('error', { status: 404, message: 'User not found' });
 
     const errors = validationResult(req);
@@ -65,12 +100,6 @@ router.post('/users/:id/edit', [
       if (existing) {
         return res.render('admin_edit_user', { editUser, errors: [{ msg: 'Username is already taken' }] });
       }
-    }
-
-    // Prevent self-demotion
-    if (editUser.id === req.session.userId && role !== 'admin') {
-      req.flash('error', 'You cannot remove your own admin privileges.');
-      return res.redirect('/admin');
     }
 
     // Prevent demoting the last admin
@@ -99,10 +128,17 @@ router.post('/users/:id/edit', [
   }
 });
 
+
 // POST Delete User
 router.post('/users/:id/delete', async (req, res) => {
   try {
-    const userToDelete = await User.findByPk(req.params.id);
+    const targetId = parseInt(req.params.id, 10);
+    if (isNaN(targetId)) {
+      logger.warn(`IDOR attempt on delete: Admin '${req.session.user.username}' used invalid ID '${req.params.id}' from IP: ${req.ip}`);
+      return res.status(400).render('error', { status: 400, message: 'Invalid user ID.' });
+    }
+
+    const userToDelete = await User.findByPk(targetId);
     if (!userToDelete) return res.status(404).render('error', { status: 404, message: 'User not found' });
 
     // Prevent deleting yourself
@@ -121,7 +157,7 @@ router.post('/users/:id/delete', async (req, res) => {
     }
 
     const deletedUsername = userToDelete.username;
-    await userToDelete.destroy(); // Will cascade delete tasks due to model association
+    await userToDelete.destroy();
 
     await AuditLog.create({
       action: 'USER_DELETED',

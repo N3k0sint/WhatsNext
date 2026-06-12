@@ -1,6 +1,6 @@
 <%- include('partials/header') %>
 
-<!-- Bootstrap Confirm Modal for Delete -->
+<!-- Bootstrap Confirm Modal for Delete ONLY -->
 <div class="modal fade" id="deleteConfirmModal" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
@@ -14,25 +14,6 @@
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
         <button type="button" class="btn btn-danger" id="confirmDeleteBtn">Yes, Delete</button>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- Bootstrap Confirm Modal for Edit -->
-<div class="modal fade" id="editConfirmModal" tabindex="-1" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content">
-      <div class="modal-header bg-primary text-white">
-        <h5 class="modal-title"><i class="bi bi-pencil-fill me-2"></i>Confirm Edit</h5>
-        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-      </div>
-      <div class="modal-body">
-        Are you sure you want to edit user <strong id="editUserName"></strong>?
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-        <button type="button" class="btn btn-primary" id="confirmEditBtn">Yes, Edit</button>
       </div>
     </div>
   </div>
@@ -140,13 +121,11 @@
                   <td><%= new Date(u.createdAt).toLocaleDateString() %></td>
                   <td>
                     <div class="d-flex gap-2">
-                      <button type="button"
-                        class="btn btn-sm btn-outline-primary"
-                        data-action="edit"
-                        data-user-id="<%= u.id %>"
-                        data-username="<%= u.username %>">
+                      <!-- Edit: direct link, no extra modal needed -->
+                      <a href="/admin/users/<%= u.id %>/edit"
+                        class="btn btn-sm btn-outline-primary">
                         Edit
-                      </button>
+                      </a>
                       <% if (locals.user && locals.user.id !== u.id) { %>
                         <button type="button"
                           class="btn btn-sm btn-danger"
