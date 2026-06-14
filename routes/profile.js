@@ -6,16 +6,17 @@ const AuditLog = require('../models/AuditLog');
 const { body, validationResult } = require('express-validator');
 const logger = require('../utils/logger');
 const bcrypt = require('bcryptjs');
+const { strictLimiter, generalLimiter } = require('../middleware/rateLimiter');
 
 router.use(isAuthenticated);
 
 // GET Profile Page
-router.get('/', async (req, res) => {
+router.get('/', generalLimiter, async (req, res) => {
   res.render('profile', { errors: [] });
 });
 
 // POST Edit Username
-router.post('/edit', [
+router.post('/edit', strictLimiter, [
   body('username').trim().isLength({ min: 3, max: 50 }).escape().withMessage('Username must be 3-50 characters.')
 ], async (req, res) => {
   const errors = validationResult(req);
@@ -60,7 +61,7 @@ router.post('/edit', [
 });
 
 // POST Change Password
-router.post('/password', [
+router.post('/password', strictLimiter, [
   body('currentPassword').notEmpty().withMessage('Current password is required'),
   body('newPassword').isLength({ min: 8 }).withMessage('New password must be at least 8 characters long.')
     .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/)

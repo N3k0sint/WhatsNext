@@ -5,11 +5,12 @@ const AuditLog = require('../models/AuditLog');
 const { isAuthenticated, isAdmin } = require('../middleware/authMiddleware');
 const logger = require('../utils/logger');
 const { body, validationResult } = require('express-validator');
+const { strictLimiter, generalLimiter } = require('../middleware/rateLimiter');
 
 router.use(isAuthenticated, isAdmin);
 
 // GET Admin Dashboard (Audit Logs & User Management)
-router.get('/', async (req, res) => {
+router.get('/', generalLimiter, async (req, res) => {
   try {
     const logs = await AuditLog.findAll({ order: [['createdAt', 'DESC']], limit: 100 });
     const users = await User.findAll({ attributes: ['id', 'username', 'role', 'createdAt'] });
@@ -21,7 +22,7 @@ router.get('/', async (req, res) => {
 });
 
 // GET /api/users for AJAX Polling
-router.get('/api/users', async (req, res) => {
+router.get('/api/users', generalLimiter, async (req, res) => {
   try {
     const users = await User.findAll({ attributes: ['id', 'username', 'role', 'createdAt'] });
     res.json(users);
@@ -31,7 +32,7 @@ router.get('/api/users', async (req, res) => {
 });
 
 // GET Edit User Page
-router.get('/users/:id/edit', async (req, res) => {
+router.get('/users/:id/edit', strictLimiter, async (req, res) => {
   try {
     const targetId = parseInt(req.params.id, 10);
 
@@ -67,7 +68,7 @@ router.get('/users/:id/edit', async (req, res) => {
 
 
 // POST Edit User
-router.post('/users/:id/edit', [
+router.post('/users/:id/edit', strictLimiter, [
   body('username').trim().isLength({ min: 3, max: 50 }).escape().withMessage('Username must be 3-50 characters.'),
   body('role').isIn(['user', 'admin']).withMessage('Invalid role selected.')
 ], async (req, res) => {
@@ -130,7 +131,7 @@ router.post('/users/:id/edit', [
 
 
 // POST Delete User
-router.post('/users/:id/delete', async (req, res) => {
+router.post('/users/:id/delete', strictLimiter, async (req, res) => {
   try {
     const targetId = parseInt(req.params.id, 10);
     if (isNaN(targetId)) {

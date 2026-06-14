@@ -8,11 +8,12 @@ const upload = require('../middleware/uploadMiddleware');
 const logger = require('../utils/logger');
 const path = require('path');
 const fs = require('fs');
+const { strictLimiter, generalLimiter } = require('../middleware/rateLimiter');
 
 router.use(isAuthenticated);
 
 // GET Tasks Dashboard
-router.get('/', async (req, res) => {
+router.get('/', generalLimiter, async (req, res) => {
   try {
     const tasks = await Task.findAll({ where: { userId: req.session.userId } });
     
@@ -34,7 +35,7 @@ router.get('/', async (req, res) => {
 });
 
 // POST Create Task
-router.post('/', upload.single('attachment'), [
+router.post('/', strictLimiter, upload.single('attachment'), [
   body('title').trim().notEmpty().escape().withMessage('Title is required'),
   body('description').trim().escape(),
   body('priority').isIn(['Low', 'Medium', 'High']).withMessage('Invalid priority selected')
@@ -82,7 +83,7 @@ router.post('/', upload.single('attachment'), [
 });
 
 // POST Update Task Status (IDOR Protection via userId check)
-router.post('/:id/status', async (req, res) => {
+router.post('/:id/status', strictLimiter, async (req, res) => {
   try {
     const task = await Task.findOne({ where: { id: req.params.id, userId: req.session.userId } });
     if (!task) return res.status(404).render('error', { status: 404, message: 'Task not found' });
@@ -100,7 +101,7 @@ router.post('/:id/status', async (req, res) => {
 });
 
 // POST Delete Task (IDOR Protection via userId check)
-router.post('/:id/delete', async (req, res) => {
+router.post('/:id/delete', strictLimiter, async (req, res) => {
   try {
     const task = await Task.findOne({ where: { id: req.params.id, userId: req.session.userId } });
     if (!task) return res.status(404).render('error', { status: 404, message: 'Task not found' });
@@ -133,7 +134,7 @@ router.post('/:id/delete', async (req, res) => {
 });
 
 // GET Download Attachment
-router.get('/download/:filename', async (req, res) => {
+router.get('/download/:filename', strictLimiter, async (req, res) => {
   try {
     const filename = path.basename(req.params.filename);
     // Verify user owns a task with this attachment. 

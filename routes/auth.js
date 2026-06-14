@@ -4,14 +4,15 @@ const { body, validationResult } = require('express-validator');
 const User = require('../models/User');
 const AuditLog = require('../models/AuditLog');
 const logger = require('../utils/logger');
+const { strictLimiter, generalLimiter } = require('../middleware/rateLimiter');
 
 // GET Registration
-router.get('/register', (req, res) => {
+router.get('/register', generalLimiter, (req, res) => {
   res.render('register', { errors: [] });
 });
 
 // POST Registration
-router.post('/register', [
+router.post('/register', strictLimiter, [
   body('username').trim().isLength({ min: 3, max: 50 }).escape().withMessage('Username must be 3-50 characters.'),
   body('password').isLength({ min: 8 }).withMessage('Password must be at least 8 characters long.')
     .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/)
@@ -45,12 +46,12 @@ router.post('/register', [
 });
 
 // GET Login
-router.get('/login', (req, res) => {
+router.get('/login', generalLimiter, (req, res) => {
   res.render('login', { errors: [] });
 });
 
 // POST Login
-router.post('/login', [
+router.post('/login', strictLimiter, [
   body('username').trim().escape().notEmpty(),
   body('password').notEmpty()
 ], async (req, res) => {
