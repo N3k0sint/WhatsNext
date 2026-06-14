@@ -51,8 +51,20 @@ router.get('/', tasksLimiter, async (req, res) => {
   }
 });
 
+// Custom file upload middleware wrapper to handle multer errors gracefully
+const handleUpload = (req, res, next) => {
+  upload.single('attachment')(req, res, async (err) => {
+    if (err) {
+      logger.warn(`File upload validation failed: ${err.message}`);
+      req.flash('error', err.message || 'File upload failed.');
+      return res.redirect('/tasks');
+    }
+    next();
+  });
+};
+
 // POST Create Task
-router.post('/', tasksStrictLimiter, upload.single('attachment'), [
+router.post('/', tasksStrictLimiter, handleUpload, [
   body('title').trim().notEmpty().escape().withMessage('Title is required'),
   body('description').trim().escape(),
   body('priority').isIn(['Low', 'Medium', 'High']).withMessage('Invalid priority selected')

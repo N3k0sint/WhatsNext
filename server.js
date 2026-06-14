@@ -61,7 +61,9 @@ app.use(flash());
 // Copy CSRF token from query parameters to headers for multipart/form-data upload compatibility
 app.use((req, res, next) => {
   if (req.query && req.query._csrf) {
-    req.headers['x-csrf-token'] = req.query._csrf;
+    // Replace space characters with '+' since URL query parser converts '+' to a space
+    const token = req.query._csrf.replace(/ /g, '+');
+    req.headers['x-csrf-token'] = token;
   }
   next();
 });
