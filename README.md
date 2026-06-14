@@ -102,13 +102,4 @@ The application will be accessible at: `http://localhost:3000`
 
 ---
 
-## 🔒 Security Auditing & Verification
-
-To verify that the system is correctly hashing passwords and following **OWASP ASVS** standards, you can run the included security audit script:
-
-```bash
-# Direct database audit of password hashes
-node verify_passwords.js
-```
-
-This script will query the SQLite database and confirm that no plaintext passwords exist and that all users are secured using valid **Bcrypt** hashes.
+This is for Project SSDev
