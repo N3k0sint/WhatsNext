@@ -8,12 +8,29 @@ const upload = require('../middleware/uploadMiddleware');
 const logger = require('../utils/logger');
 const path = require('path');
 const fs = require('fs');
-const { strictLimiter, generalLimiter } = require('../middleware/rateLimiter');
+const rateLimit = require('express-rate-limit');
+
+// Local rate limiters to ensure Snyk Code static resolution
+const tasksLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 100,
+  message: 'Too many requests from this IP, please try again later.',
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
+const tasksStrictLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 20,
+  message: 'Too many sensitive requests from this IP, please try again later.',
+  standardHeaders: true,
+  legacyHeaders: false,
+});
 
 router.use(isAuthenticated);
 
 // GET Tasks Dashboard
-router.get('/', generalLimiter, async (req, res) => {
+router.get('/', tasksLimiter, async (req, res) => {
   try {
     const tasks = await Task.findAll({ where: { userId: req.session.userId } });
     
@@ -35,7 +52,7 @@ router.get('/', generalLimiter, async (req, res) => {
 });
 
 // POST Create Task
-router.post('/', strictLimiter, upload.single('attachment'), [
+router.post('/', tasksStrictLimiter, upload.single('attachment'), [
   body('title').trim().notEmpty().escape().withMessage('Title is required'),
   body('description').trim().escape(),
   body('priority').isIn(['Low', 'Medium', 'High']).withMessage('Invalid priority selected')
@@ -83,7 +100,7 @@ router.post('/', strictLimiter, upload.single('attachment'), [
 });
 
 // POST Update Task Status (IDOR Protection via userId check)
-router.post('/:id/status', strictLimiter, async (req, res) => {
+router.post('/:id/status', tasksStrictLimiter, async (req, res) => {
   try {
     const task = await Task.findOne({ where: { id: req.params.id, userId: req.session.userId } });
     if (!task) return res.status(404).render('error', { status: 404, message: 'Task not found' });
@@ -101,7 +118,7 @@ router.post('/:id/status', strictLimiter, async (req, res) => {
 });
 
 // POST Delete Task (IDOR Protection via userId check)
-router.post('/:id/delete', strictLimiter, async (req, res) => {
+router.post('/:id/delete', tasksStrictLimiter, async (req, res) => {
   try {
     const task = await Task.findOne({ where: { id: req.params.id, userId: req.session.userId } });
     if (!task) return res.status(404).render('error', { status: 404, message: 'Task not found' });
@@ -134,7 +151,7 @@ router.post('/:id/delete', strictLimiter, async (req, res) => {
 });
 
 // GET Download Attachment
-router.get('/download/:filename', strictLimiter, async (req, res) => {
+router.get('/download/:filename', tasksStrictLimiter, async (req, res) => {
   try {
     const filename = path.basename(req.params.filename);
     // Verify user owns a task with this attachment. 

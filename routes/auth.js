@@ -4,15 +4,32 @@ const { body, validationResult } = require('express-validator');
 const User = require('../models/User');
 const AuditLog = require('../models/AuditLog');
 const logger = require('../utils/logger');
-const { strictLimiter, generalLimiter } = require('../middleware/rateLimiter');
+const rateLimit = require('express-rate-limit');
+
+// Local rate limiters to ensure Snyk Code static resolution
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 100,
+  message: 'Too many requests from this IP, please try again later.',
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
+const authStrictLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 20,
+  message: 'Too many sensitive requests from this IP, please try again later.',
+  standardHeaders: true,
+  legacyHeaders: false,
+});
 
 // GET Registration
-router.get('/register', generalLimiter, (req, res) => {
+router.get('/register', authLimiter, (req, res) => {
   res.render('register', { errors: [] });
 });
 
 // POST Registration
-router.post('/register', strictLimiter, [
+router.post('/register', authStrictLimiter, [
   body('username').trim().isLength({ min: 3, max: 50 }).escape().withMessage('Username must be 3-50 characters.'),
   body('password').isLength({ min: 8 }).withMessage('Password must be at least 8 characters long.')
     .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/)
@@ -46,12 +63,12 @@ router.post('/register', strictLimiter, [
 });
 
 // GET Login
-router.get('/login', generalLimiter, (req, res) => {
+router.get('/login', authLimiter, (req, res) => {
   res.render('login', { errors: [] });
 });
 
 // POST Login
-router.post('/login', strictLimiter, [
+router.post('/login', authStrictLimiter, [
   body('username').trim().escape().notEmpty(),
   body('password').notEmpty()
 ], async (req, res) => {

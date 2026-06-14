@@ -6,17 +6,34 @@ const AuditLog = require('../models/AuditLog');
 const { body, validationResult } = require('express-validator');
 const logger = require('../utils/logger');
 const bcrypt = require('bcryptjs');
-const { strictLimiter, generalLimiter } = require('../middleware/rateLimiter');
+const rateLimit = require('express-rate-limit');
+
+// Local rate limiters to ensure Snyk Code static resolution
+const profileLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 100,
+  message: 'Too many requests from this IP, please try again later.',
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
+const profileStrictLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 20,
+  message: 'Too many sensitive requests from this IP, please try again later.',
+  standardHeaders: true,
+  legacyHeaders: false,
+});
 
 router.use(isAuthenticated);
 
 // GET Profile Page
-router.get('/', generalLimiter, async (req, res) => {
+router.get('/', profileLimiter, async (req, res) => {
   res.render('profile', { errors: [] });
 });
 
 // POST Edit Username
-router.post('/edit', strictLimiter, [
+router.post('/edit', profileStrictLimiter, [
   body('username').trim().isLength({ min: 3, max: 50 }).escape().withMessage('Username must be 3-50 characters.')
 ], async (req, res) => {
   const errors = validationResult(req);
@@ -61,7 +78,7 @@ router.post('/edit', strictLimiter, [
 });
 
 // POST Change Password
-router.post('/password', strictLimiter, [
+router.post('/password', profileStrictLimiter, [
   body('currentPassword').notEmpty().withMessage('Current password is required'),
   body('newPassword').isLength({ min: 8 }).withMessage('New password must be at least 8 characters long.')
     .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/)

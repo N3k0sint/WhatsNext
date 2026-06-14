@@ -5,12 +5,29 @@ const AuditLog = require('../models/AuditLog');
 const { isAuthenticated, isAdmin } = require('../middleware/authMiddleware');
 const logger = require('../utils/logger');
 const { body, validationResult } = require('express-validator');
-const { strictLimiter, generalLimiter } = require('../middleware/rateLimiter');
+const rateLimit = require('express-rate-limit');
+
+// Local rate limiters to ensure Snyk Code static resolution
+const adminLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 100,
+  message: 'Too many requests from this IP, please try again later.',
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
+const adminStrictLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 20,
+  message: 'Too many requests from this IP, please try again later.',
+  standardHeaders: true,
+  legacyHeaders: false,
+});
 
 router.use(isAuthenticated, isAdmin);
 
 // GET Admin Dashboard (Audit Logs & User Management)
-router.get('/', generalLimiter, async (req, res) => {
+router.get('/', adminLimiter, async (req, res) => {
   try {
     const logs = await AuditLog.findAll({ order: [['createdAt', 'DESC']], limit: 100 });
     const users = await User.findAll({ attributes: ['id', 'username', 'role', 'createdAt'] });
@@ -22,7 +39,7 @@ router.get('/', generalLimiter, async (req, res) => {
 });
 
 // GET /api/users for AJAX Polling
-router.get('/api/users', generalLimiter, async (req, res) => {
+router.get('/api/users', adminLimiter, async (req, res) => {
   try {
     const users = await User.findAll({ attributes: ['id', 'username', 'role', 'createdAt'] });
     res.json(users);
@@ -32,7 +49,7 @@ router.get('/api/users', generalLimiter, async (req, res) => {
 });
 
 // GET Edit User Page
-router.get('/users/:id/edit', strictLimiter, async (req, res) => {
+router.get('/users/:id/edit', adminStrictLimiter, async (req, res) => {
   try {
     const targetId = parseInt(req.params.id, 10);
 
@@ -68,7 +85,7 @@ router.get('/users/:id/edit', strictLimiter, async (req, res) => {
 
 
 // POST Edit User
-router.post('/users/:id/edit', strictLimiter, [
+router.post('/users/:id/edit', adminStrictLimiter, [
   body('username').trim().isLength({ min: 3, max: 50 }).escape().withMessage('Username must be 3-50 characters.'),
   body('role').isIn(['user', 'admin']).withMessage('Invalid role selected.')
 ], async (req, res) => {
@@ -131,7 +148,7 @@ router.post('/users/:id/edit', strictLimiter, [
 
 
 // POST Delete User
-router.post('/users/:id/delete', strictLimiter, async (req, res) => {
+router.post('/users/:id/delete', adminStrictLimiter, async (req, res) => {
   try {
     const targetId = parseInt(req.params.id, 10);
     if (isNaN(targetId)) {
