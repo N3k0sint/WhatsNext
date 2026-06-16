@@ -102,4 +102,27 @@ The application will be accessible at: `http://localhost:3000`
 
 ---
 
+## 📸 System Preview & Screenshots
+
+### 1. Workspace Dashboard Overview
+Below is the core authenticated workspace dashboard, featuring live workflow metric calculations, task priority segregation, and secure file attachment components.
+![Workspace Dashboard Overview](path/to/screenshot_dashboard.png)
+*Figure 1: Main task tracking interface (`/tasks`) showing status rows, priority badges, and multi-part upload boundaries.*
+
+### 2. Security Audit Logs & Admin Panel
+The central administrative portal manages roles, reviews active user accounts, and tracks security audit logs to enforce total system accountability.
+![Security Audit Logs and Admin Control](path/to/screenshot_admin.png)
+*Figure 2: Real-time user management console and security event stream (`/admin`) tracking authorization cycles.*
+
+### 3. Account Settings & Password Complexity Controls
+The profile management view handles credential updates via strict password rule requirements and client-side modal confirmations.
+![Profile Settings and Password Update](path/to/screenshot_profile.png)
+*Figure 3: Self-service identity workspace (`/profile`) demonstrating runtime complexity enforcement and anti-CSRF confirmations.*
+
+### 4. Suppressed Information Error Boundary
+When errors occur, stack traces are withheld from client views to protect internal system intelligence from threat actors.
+![Suppressed Information Error Boundary](path/to/screenshot_error.png)
+*Figure 4: Secure custom error view (`error.ejs`) enforcing structural error masking parameters.*
+
+---
 This is for Project SSDev
