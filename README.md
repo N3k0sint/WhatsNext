@@ -102,4 +102,32 @@ The application will be accessible at: `http://localhost:3000`
 
 ---
 
+## 📸 System Preview & Screenshots
+
+### 1. Workspace Dashboard Overview
+Below is the core authenticated workspace dashboard, featuring live workflow metric calculations, task priority segregation, and secure file attachment components.
+![Workspace Dashboard Overview]<img width="1918" height="912" alt="Screenshot 2026-06-17 011114" src="https://github.com/user-attachments/assets/3c0bd933-f17e-41be-9fb6-550631354f8e" />
+
+*Figure 1: Main task tracking interface (`/tasks`) showing status rows, priority badges, and multi-part upload boundaries.*
+
+### 2. Security Audit Logs & Admin Panel
+The central administrative portal manages roles, reviews active user accounts, and tracks security audit logs to enforce total system accountability.
+![Security Audit Logs and Admin Control]<img width="1919" height="910" alt="Screenshot 2026-06-17 011454" src="https://github.com/user-attachments/assets/d644c8dc-e90a-4684-a41b-a04ca1515801" />
+
+*Figure 2: Real-time user management console and security event stream (`/admin`) tracking authorization cycles.*
+
+### 3. Account Settings & Password Complexity Controls
+The profile management view handles credential updates via strict password rule requirements and client-side modal confirmations.
+![Profile Settings and Password Update]<img width="1919" height="913" alt="Screenshot 2026-06-17 011542" src="https://github.com/user-attachments/assets/314d684c-bf9e-4aa8-b171-e9dd5d2aff52" />
+
+*Figure 3: Self-service identity workspace (`/profile`) demonstrating runtime complexity enforcement and anti-CSRF confirmations.*
+
+### 4. Suppressed Information Error Boundary
+When errors occur, stack traces are withheld from client views to protect internal system intelligence from threat actors.
+![Suppressed Information Error Boundary]<img width="1919" height="586" alt="Screenshot 2026-06-17 011820" src="https://github.com/user-attachments/assets/dfa4733b-6495-4b9a-b5cb-d0fa934d60b8" />
+
+*Figure 4: Secure custom error view (`error.ejs`) enforcing structural error masking parameters.*
+
+---
+
 This is for Project SSDev
