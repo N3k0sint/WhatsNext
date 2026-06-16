@@ -2,9 +2,9 @@ node_modules/
 .env
 database.sqlite
 logs/*.log
-uploads/
+uploads/*
+!uploads/.gitkeep
 .DS_Store
 REPORT_GUIDE.md
 Test.md
 MBR_3_GUIDE.md
-verify_passwords.js

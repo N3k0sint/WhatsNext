@@ -1,14 +1,24 @@
 require('dotenv').config();
 const express = require('express');
+const fs = require('fs');
+const path = require('path');
 const helmet = require('helmet');
 const session = require('express-session');
 const lusca = require('lusca');
 const rateLimit = require('express-rate-limit');
 const flash = require('connect-flash');
-const path = require('path');
 const sequelize = require('./config/database');
 const { setLocals } = require('./middleware/authMiddleware');
 const logger = require('./utils/logger');
+
+// Ensure required runtime directories exist (e.g. uploads/ and logs/)
+const requiredDirs = ['uploads', 'logs'];
+requiredDirs.forEach(dir => {
+  const dirPath = path.join(__dirname, dir);
+  if (!fs.existsSync(dirPath)) {
+    fs.mkdirSync(dirPath, { recursive: true });
+  }
+});
 
 // Setup CSRF Protection
 // CSRF Configuration handled by lusca directly
