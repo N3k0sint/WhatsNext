@@ -114,7 +114,7 @@ app.use((req, res, next) => {
 // Global Error Handler (OWASP ASVS V7 - No Stack Traces Exposed)
 app.use((err, req, res, next) => {
   logger.error(`Unhandled Exception: ${err.message}`);
-  if (err.code === 'EBADCSRFTOKEN' || err.message === 'CSRF token mismatch') {
+  if (err.code === 'EBADCSRFTOKEN' || err.message === 'CSRF token mismatch' || err.message === 'invalid csrf token') {
     const reqToken = (req.body && req.body._csrf) || req.headers['x-csrf-token'] || (req.query && req.query._csrf);
     const sessToken = req.session ? req.session._csrf : 'No Session';
     logger.warn(`CSRF Token Mismatch! Request token: ${reqToken}. Session token: ${sessToken}`);
