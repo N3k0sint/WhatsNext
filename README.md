@@ -1,6 +1,6 @@
 # WhatsNext? - Enterprise Secure Task Management System
 
-**WhatsNext?** is a high-performance, secure task management ecosystem designed to streamline collaboration while maintaining uncompromising security. This project demonstrates a **"Security-by-Design"** philosophy, where defense mechanisms are woven into the core architecture rather than applied as an afterthought.
+**WhatsNext?** is a high-performance, secure task management ecosystem designed toe collaboration while maintaining uncompromising security. This project demonstrates a **"Security-by-Design"** philosophy, where defense mechanisms are woven into the core architecture rather than applied as an afterthought.
 
 Built as an enterprise-ready Node.js application, it adheres to **Defense-in-Depth** principles and **OWASP ASVS** standards.
 
